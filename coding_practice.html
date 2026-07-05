@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌐 웹 크롤링 코딩 연습</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+@font-face {
+  font-family: 'HakgyoansimKkureogi';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_school@1.0/HakgyoansimKkureogi.woff2') format('woff2'),
+       url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_school@1.0/HakgyoansimKkureogi.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+</style>
+<style>
+:root {
+  --red:#EF4444; --yellow:#F59E0B; --green:#22C55E; --blue:#3B82F6;
+  --purple:#8B5CF6; --pink:#EC4899; --dark:#1E1E2E; --gray:#64748B;
+  --body:#F1F5F9; --card:#FFFFFF; --border:#E2E8F0;
+  --ok:#16A34A; --wrong:#DC2626; --miss:#94A3B8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--body);min-height:100vh;color:#1E293B;}
+
+/* ── HEADER ── */
+.app-header{background:#FF6B35;padding:13px 32px;display:flex;align-items:center;box-shadow:0 2px 8px rgba(255,107,53,.3);flex-shrink:0;}
+.header-brand{display:flex;align-items:center;gap:12px;}
+.fish-icon{font-size:2.1rem;line-height:1;}
+.app-header h1{font-family:'HakgyoansimKkureogi','Noto Sans KR',cursive;font-size:1.7rem;font-weight:400;color:#fff;letter-spacing:-.1px;}
+
+/* ── HOME ── */
+#home-view{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.home-body{display:flex;flex:1;min-height:0;overflow:hidden;}
+.unit-nav{width:96px;background:#fff;border-right:2px solid #F1F5F9;padding:10px 6px;display:flex;flex-direction:column;gap:3px;overflow-y:auto;flex-shrink:0;}
+.unit-nav-label{font-size:.6rem;font-weight:800;color:#94A3B8;letter-spacing:.1em;padding:3px 6px 8px;text-transform:uppercase;}
+.unit-nav-btn{background:none;border:none;padding:7px 8px;border-radius:8px;font-family:inherit;font-size:.74rem;font-weight:700;cursor:pointer;text-align:left;color:#5F6368;transition:all .15s;width:100%;line-height:1.3;}
+.unit-nav-btn:hover{background:#FFF4EF;color:#FF6B35;}
+.unit-nav-btn.active{background:#FF6B35;color:#fff;}
+#home-cards{flex:1;overflow-y:auto;padding:20px 28px;position:relative;}
+.app-footer{text-align:center;padding:9px 16px;font-size:.68rem;color:#94A3B8;background:#fff;border-top:1px solid var(--border);flex-shrink:0;}
+.copyright-ex{font-size:.63rem;color:#94A3B8;}
+.home-subtitle{text-align:center;margin-bottom:28px;}
+.home-subtitle h2{font-size:1.3rem;font-weight:700;color:#1E293B;}
+.home-subtitle p{color:var(--gray);margin-top:4px;font-size:.9rem;}
+
+.unit-section{margin-bottom:32px;}
+.unit-label{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:20px;font-weight:700;font-size:.82rem;color:#fff;margin-bottom:12px;}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+.ex-card{background:var(--card);border-radius:14px;padding:18px;border:1.5px solid var(--border);cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.ex-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.12);}
+.ex-card::before{content:'';position:absolute;top:0;left:0;width:5px;height:100%;background:var(--accent-color);}
+.ex-card .card-icon{font-size:1.6rem;margin-bottom:8px;}
+.ex-card .card-title{font-weight:700;font-size:.95rem;margin-bottom:4px;}
+.ex-card .card-desc{font-size:.78rem;color:var(--gray);line-height:1.5;}
+.ex-card .card-lines{font-size:.72rem;color:var(--gray);margin-top:8px;}
+.ex-card .done-badge{position:absolute;top:10px;right:10px;font-size:1.1rem;}
+.card-btn{margin-top:12px;width:100%;padding:8px;border:none;border-radius:8px;font-family:inherit;font-weight:700;font-size:.82rem;color:#fff;cursor:pointer;transition:opacity .2s;}
+.card-btn:hover{opacity:.85;}
+
+/* ── EXERCISE VIEW ── */
+#exercise-view{display:none;flex-direction:column;height:100vh;}
+.ex-header{background:#fff;color:#1E293B;padding:9px 24px;display:flex;align-items:center;gap:16px;flex-shrink:0;border-bottom:1px solid #F1F5F9;box-shadow:0 1px 4px rgba(0,0,0,.07);}
+.back-btn{background:#FFF4EF;border:1.5px solid #FFD0BC;color:#FF6B35;padding:5px 14px;border-radius:8px;cursor:pointer;font-family:inherit;font-weight:700;font-size:.82rem;transition:all .15s;}
+.back-btn:hover{background:#FF6B35;color:#fff;border-color:#FF6B35;}
+.ex-header-info h2{font-size:1rem;font-weight:900;color:#202124;}
+.ex-header-info .unit-tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.72rem;font-weight:700;margin-bottom:2px;color:#fff;}
+
+.ex-body{display:flex;flex:1;min-height:0;overflow:hidden;}
+
+/* Code panel */
+.code-panel{width:52%;background:#1E1E2E;display:flex;flex-direction:column;border-right:2px solid #2D2D3F;flex-shrink:0;
+  user-select:none;-webkit-user-select:none;-moz-user-select:none;cursor:default;}
+.panel-label{background:#2D2D3F;padding:10px 16px;font-size:.78rem;font-weight:700;color:#A0A0B0;display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.code-display{flex:1;overflow-y:auto;padding:16px 20px;}
+.code-display pre{font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.75;color:#F8F8F2;white-space:pre-wrap;word-break:break-all;counter-reset:line;}
+.code-display pre span{display:block;padding-left:2.8em;position:relative;}
+.code-display pre span::before{content:counter(line);counter-increment:line;position:absolute;left:0;width:2.2em;text-align:right;color:#555570;font-size:.75rem;user-select:none;}
+.code-line-comment{color:#4A4A62!important;font-style:italic;}
+
+/* Input panel */
+.input-panel{flex:1;display:flex;flex-direction:column;background:#FAFBFF;overflow:hidden;}
+.input-panel .panel-label{background:#F1F5F9;color:#475569;}
+.textarea-wrap{flex-shrink:0;padding:10px 14px 6px;display:flex;flex-direction:column;gap:6px;}
+#code-input{font-family:'JetBrains Mono',monospace;font-size:.82rem;padding:12px;border:2px solid var(--border);border-radius:10px;resize:none;outline:none;line-height:1.75;tab-size:4;white-space:pre;overflow-x:auto;overflow-y:auto;height:155px;transition:border-color .2s;}
+#code-input:focus{border-color:#8B5CF6;}
+#code-input.all-match{border-color:var(--green);box-shadow:0 0 0 3px rgba(34,197,94,.2);}
+
+.match-bar-wrap{display:flex;align-items:center;gap:10px;}
+.match-bar{flex:1;height:8px;background:#E2E8F0;border-radius:4px;overflow:hidden;}
+.match-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--green),#16A34A);transition:width .3s;}
+.match-pct{font-size:.8rem;font-weight:700;min-width:38px;text-align:right;}
+
+.match-status{font-size:.78rem;padding:4px 10px;border-radius:8px;font-weight:600;}
+.match-status.ok{background:#DCFCE7;color:#15803D;}
+.match-status.partial{background:#FEF9C3;color:#854D0E;}
+.match-status.start{background:#F1F5F9;color:var(--gray);}
+
+/* Comparison display */
+.cmp-section{border-top:2px solid var(--border);flex:1;min-height:0;display:flex;flex-direction:column;}
+.cmp-header{padding:8px 16px;background:#F8FAFC;font-size:.78rem;font-weight:700;color:#475569;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.cmp-body{background:#1E1E2E;flex:1;min-height:0;overflow-y:auto;padding:10px 16px;}
+.cmp-body pre{font-family:'JetBrains Mono',monospace;font-size:.75rem;line-height:1.8;white-space:pre-wrap;word-break:break-all;}
+.cmp-ok{background:rgba(34,197,94,.25);color:#86EFAC;border-radius:2px;}
+.cmp-wrong{background:rgba(220,38,38,.3);color:#FCA5A5;border-radius:2px;outline:1px solid rgba(220,38,38,.5);}
+.cmp-miss{color:#4B5563;}
+.cmp-extra{background:rgba(245,158,11,.3);color:#FCD34D;border-radius:2px;}
+
+/* Emoji palette */
+.emoji-palette{display:none;flex-shrink:0;padding:6px 14px 8px;background:#F8FAFC;border-top:1px solid var(--border);}
+.emoji-palette-label{font-size:.68rem;color:#64748B;margin-bottom:4px;font-weight:700;letter-spacing:.02em;}
+.emoji-btns{display:flex;flex-wrap:wrap;gap:4px;}
+.emoji-btn{background:#fff;border:1.5px solid #CBD5E1;border-radius:8px;padding:3px 8px;font-size:1.1rem;cursor:pointer;transition:all .15s;line-height:1.4;user-select:none;-webkit-user-select:none;}
+.emoji-btn:hover{background:#E0E7FF;border-color:#8B5CF6;transform:scale(1.15);}
+.emoji-btn:active{transform:scale(.95);}
+
+/* Action bar */
+.action-bar{padding:8px 20px;background:#fff;border-top:2px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.btn-reset{background:#F1F5F9;border:none;padding:10px 18px;border-radius:8px;font-family:inherit;font-weight:700;font-size:.85rem;cursor:pointer;color:#475569;}
+.btn-reset:hover{background:#E2E8F0;}
+.btn-result{background:linear-gradient(135deg,#7C3AED,#DB2777);border:none;padding:10px 22px;border-radius:8px;font-family:inherit;font-weight:700;font-size:.85rem;cursor:pointer;color:#fff;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.btn-result:hover{opacity:.9;transform:translateY(-1px);}
+.btn-result.pulse{animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(124,58,237,.4);}50%{box-shadow:0 0 0 8px rgba(124,58,237,0);}}
+.btn-answer{background:linear-gradient(135deg,#0EA5E9,#0284C7);border:none;padding:10px 22px;border-radius:8px;font-family:inherit;font-weight:700;font-size:.85rem;cursor:pointer;color:#fff;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.btn-answer:hover{opacity:.9;transform:translateY(-1px);}
+.btn-copy-answer{background:#F1F5F9;color:#475569;}
+.btn-copy-answer:hover{background:#E2E8F0;}
+
+/* ── MODALS ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:1000;}
+.overlay.show{display:flex;}
+.modal{background:#fff;border-radius:20px;padding:32px;max-width:420px;width:90%;box-shadow:0 25px 60px rgba(0,0,0,.3);animation:popIn .25s ease;}
+@keyframes popIn{from{transform:scale(.85);opacity:0;}to{transform:scale(1);opacity:1;}}
+.modal h3{font-size:1.1rem;font-weight:900;margin-bottom:8px;}
+.modal p{font-size:.88rem;color:var(--gray);margin-bottom:20px;line-height:1.6;}
+.modal input{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:10px;font-family:inherit;font-size:1rem;outline:none;transition:border-color .2s;letter-spacing:3px;text-align:center;}
+.modal input:focus{border-color:#8B5CF6;}
+.modal-btns{display:flex;gap:10px;margin-top:14px;}
+.modal-btns button{flex:1;padding:12px;border:none;border-radius:10px;font-family:inherit;font-weight:700;font-size:.9rem;cursor:pointer;}
+.btn-cancel{background:#F1F5F9;color:#475569;}
+.btn-cancel:hover{background:#E2E8F0;}
+.btn-confirm{background:linear-gradient(135deg,#7C3AED,#DB2777);color:#fff;}
+.btn-confirm:hover{opacity:.9;}
+.error-msg{color:var(--wrong);font-size:.8rem;margin-top:8px;text-align:center;display:none;}
+.error-msg.show{display:block;}
+
+/* Result display */
+.result-modal{max-width:600px;}
+.terminal{background:#1E1E2E;border-radius:12px;overflow:hidden;margin-top:16px;}
+.terminal-header{background:#2D2D3F;padding:10px 16px;display:flex;align-items:center;gap:8px;}
+.terminal-dot{width:12px;height:12px;border-radius:50%;}
+.terminal-body{padding:16px;font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.9;color:#F8F8F2;white-space:pre-wrap;}
+.terminal-prompt{color:#6B7280;}
+.terminal-out{color:#A6E22E;}
+.terminal-green{color:#A6E22E;}
+
+/* Success overlay */
+#success-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:900;flex-direction:column;gap:16px;}
+#success-overlay.show{display:flex;}
+.success-box{background:#fff;border-radius:24px;padding:36px 40px;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,.3);animation:popIn .3s ease;}
+.success-box .emoji{font-size:3.5rem;display:block;margin-bottom:12px;}
+.success-box h2{font-size:1.4rem;font-weight:900;color:#15803D;margin-bottom:6px;}
+.success-box p{color:var(--gray);font-size:.9rem;}
+
+/* Toast */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:#1E293B;color:#fff;padding:10px 20px;border-radius:10px;font-size:.83rem;font-weight:600;z-index:2000;transition:transform .3s;pointer-events:none;}
+#toast.show{transform:translateX(-50%) translateY(0);}
+
+/* Confetti canvas */
+#confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:999;}
+</style>
+</head>
+<body>
+
+<!-- HOME VIEW -->
+<div id="home-view">
+  <div class="app-header">
+    <div class="header-brand">
+      <span class="fish-icon">🐟</span>
+      <h1>웹 크롤링 코딩 연습</h1>
+    </div>
+  </div>
+  <div class="home-body">
+    <nav class="unit-nav" id="unit-nav">
+      <div class="unit-nav-label">단계</div>
+    </nav>
+    <div id="home-cards"></div>
+  </div>
+  <div class="app-footer">©2026 GONOL. All Rights Reserved.</div>
+</div>
+
+<!-- EXERCISE VIEW -->
+<div id="exercise-view">
+  <div class="ex-header">
+    <button class="back-btn" onclick="goHome()">← 목록</button>
+    <div class="ex-header-info">
+      <div class="unit-tag" id="ex-unit-tag"></div>
+      <h2 id="ex-title"></h2>
+    </div>
+  </div>
+  <div class="ex-body">
+    <div class="code-panel">
+      <div class="panel-label">📋 참고 코드 &nbsp;<span style="color:#6B6B88;font-weight:400;font-size:.72rem">— 회색 줄(#주석)은 입력 안 해도 됩니다</span></div>
+      <div class="code-display"><pre id="code-display-pre"></pre></div>
+    </div>
+    <div class="input-panel">
+      <div class="panel-label">⌨️ 여기에 직접 타이핑하세요! &nbsp;<span style="color:#6B7280;font-weight:400;font-size:.72rem">— 입력한 코드는 Ctrl+C로 복사 가능</span></div>
+      <div class="textarea-wrap">
+        <textarea id="code-input" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="왼쪽 코드를 보고 # 주석 줄은 건너뛰고&#10;코드만 한 글자씩 타이핑해보세요!&#10;(TAB 키 → 4칸 들여쓰기)"></textarea>
+        <div class="match-bar-wrap">
+          <div class="match-bar"><div class="match-fill" id="match-fill" style="width:0%"></div></div>
+          <div class="match-pct" id="match-pct">0%</div>
+        </div>
+        <div class="match-status start" id="match-status">타이핑을 시작하면 비교가 시작돼요 ✏️</div>
+      </div>
+      <div id="emoji-palette" class="emoji-palette">
+        <div class="emoji-palette-label">👇 키보드로 입력 어려운 특수문자 — 클릭하면 커서 위치에 바로 입력돼요!</div>
+        <div class="emoji-btns" id="emoji-btns"></div>
+      </div>
+      <div class="cmp-section">
+        <div class="cmp-header">
+          <span>🔍 글자별 비교 결과 <span style="font-weight:400;color:#94A3B8">(초록=맞음 / 빨강=틀림 / 회색=미입력)</span></span>
+          <span id="cmp-stats" style="font-size:.75rem;color:#64748B"></span>
+        </div>
+        <div class="cmp-body"><pre id="cmp-display"></pre></div>
+      </div>
+    </div>
+  </div>
+  <div class="action-bar">
+    <button class="btn-reset" onclick="resetInput()">🗑️ 초기화</button>
+    <span class="copyright-ex">©2026 GONOL. All Rights Reserved.</span>
+    <div style="display:flex;gap:10px;">
+      <button class="btn-answer" id="btn-answer" onclick="openAnswerPasswordModal()">📖 정답 확인</button>
+      <button class="btn-result" id="btn-result" onclick="openPasswordModal()">🔐 결과 확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- Password Modal -->
+<div class="overlay" id="pw-overlay">
+  <div class="modal">
+    <h3>🔐 결과 확인 (선생님 전용)</h3>
+    <p>선생님이 알려준 암호를 입력하면<br>실행 결과를 확인할 수 있어요!</p>
+    <input type="password" id="pw-input" placeholder="암호 입력" maxlength="30">
+    <div class="error-msg" id="pw-error">❌ 암호가 틀렸어요. 선생님께 물어보세요!</div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closePasswordModal()">취소</button>
+      <button class="btn-confirm" onclick="checkPassword()">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- Result Modal -->
+<div class="overlay" id="result-overlay">
+  <div class="modal result-modal">
+    <h3>✅ 실행 결과</h3>
+    <p id="result-ex-title" style="color:#7C3AED;font-weight:700;"></p>
+    <div class="terminal">
+      <div class="terminal-header">
+        <div class="terminal-dot" style="background:#FF5F57"></div>
+        <div class="terminal-dot" style="background:#FFBD44"></div>
+        <div class="terminal-dot" style="background:#00CA4E"></div>
+        <span style="color:#888;font-size:.75rem;margin-left:8px;font-family:'JetBrains Mono',monospace;">Terminal</span>
+      </div>
+      <div class="terminal-body" id="result-body"></div>
+    </div>
+    <div class="modal-btns" style="margin-top:16px;">
+      <button class="btn-confirm" onclick="closeResultModal()">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- Answer Password Modal -->
+<div class="overlay" id="answer-pw-overlay">
+  <div class="modal">
+    <h3>📖 정답 확인 (선생님 전용)</h3>
+    <p>선생님이 알려준 암호를 입력하면<br>위에서 타이핑해야 했던 정답 코드를 확인하고 복사할 수 있어요!</p>
+    <input type="password" id="answer-pw-input" placeholder="암호 입력" maxlength="30">
+    <div class="error-msg" id="answer-pw-error">❌ 암호가 틀렸어요. 선생님께 물어보세요!</div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeAnswerPasswordModal()">취소</button>
+      <button class="btn-confirm" onclick="checkAnswerPassword()">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- Answer Modal -->
+<div class="overlay" id="answer-overlay">
+  <div class="modal result-modal">
+    <h3>📖 정답 코드</h3>
+    <p id="answer-ex-title" style="color:#0284C7;font-weight:700;"></p>
+    <div class="terminal">
+      <div class="terminal-header">
+        <div class="terminal-dot" style="background:#FF5F57"></div>
+        <div class="terminal-dot" style="background:#FFBD44"></div>
+        <div class="terminal-dot" style="background:#00CA4E"></div>
+        <span style="color:#888;font-size:.75rem;margin-left:8px;font-family:'JetBrains Mono',monospace;">정답 코드 — 복사 가능</span>
+      </div>
+      <div class="terminal-body" id="answer-body" style="user-select:text;"></div>
+    </div>
+    <div class="modal-btns" style="margin-top:16px;">
+      <button class="btn-cancel btn-copy-answer" onclick="copyAnswer()">📋 복사하기</button>
+      <button class="btn-confirm" onclick="closeAnswerModal()">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- Success Overlay -->
+<div id="success-overlay">
+  <div class="success-box">
+    <span class="emoji">🎉</span>
+    <h2>완벽해요!</h2>
+    <p>코드를 100% 정확하게 입력했어요!<br>이제 결과 확인 버튼을 눌러보세요 🔐</p>
+  </div>
+</div>
+
+<div id="toast"></div>
+<canvas id="confetti-canvas"></canvas>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  TEACHER PASSWORD  ←  여기서 암호를 변경하세요
+// ════════════════════════════════════════════════════════
+const ANSWER_PASSWORD = "hello2025";
+const REVEAL_PASSWORD = "hello2026";   // 정답 코드 확인용 암호
+
+// ════════════════════════════════════════════════════════
+//  EXERCISES DATA
+// ════════════════════════════════════════════════════════
+const EXERCISES = [
+  // ─── 1-2단계 ───────────────────────────────────────
+  {
+    id:1, unit:"1-2단계", color:"#EF4444", icon:"🖨️",
+    title:"첫 번째 코드 실행",
+    desc:"파이썬 print 함수로 화면에 글자를 출력해봐요!",
+    code:
+`# test.py — 처음 실행해 보는 파이썬 코드
+print("선생님 최고! 파이썬 크롤링 시작합니다.")
+print("Hello, Python! 😊")
+
+# 위에 적고 오른쪽 위 ▶ 버튼을 누르면
+# 아래 까만 창(터미널)에 결과가 출력됩니다!`,
+    result:
+`PS C:\\Users\\크롤링수업> python test.py
+
+선생님 최고! 파이썬 크롤링 시작합니다.
+Hello, Python! 😊
+
+PS C:\\Users\\크롤링수업> _`
+  },
+
+  // ─── 3-4단계 ───────────────────────────────────────
+  {
+    id:2, unit:"3-4단계", color:"#EF4444", icon:"✂️",
+    title:"변수와 문자열 가공 실습",
+    desc:"strip()과 replace()로 문자열을 깔끔하게 다듬어봐요!",
+    code:
+`# 변수(상자)에 문자열을 담을 때는 반드시 따옴표로 감싸줍니다.
+movie = " [추천] 어벤져스 : 엔드게임 "
+print("원본 데이터:", movie)
+
+# 1) strip(): 글자 앞뒤의 공백을 싹 지워줍니다.
+clean_movie = movie.strip()
+print("공백 청소 후:", clean_movie)
+
+# 2) replace(): 특정 글자를 원하는 글자로 바꿔줍니다.
+final_movie = clean_movie.replace("[추천]", "🔥 인기영화 🔥")
+print("최종 완성 데이터:", final_movie)`,
+    result:
+`원본 데이터:  [추천] 어벤져스 : 엔드게임
+공백 청소 후: [추천] 어벤져스 : 엔드게임
+최종 완성 데이터: 🔥 인기영화 🔥 어벤져스 : 엔드게임`
+  },
+  {
+    id:3, unit:"3-4단계", color:"#EF4444", icon:"📦",
+    title:"리스트 실습",
+    desc:"여러 데이터를 리스트 상자에 담고 꺼내봐요!",
+    code:
+`# 여러 데이터를 한 방에 묶어서 관리하는 리스트 상자
+song_list = ["Love Dive", "Ditto", "Hype Boy"]
+print("리스트 전체 보기:", song_list)
+
+# 프로그래밍에서 순서는 1이 아니라 0부터 시작합니다!
+print("0번째 방에 있는 데이터:", song_list[0])
+print("1번째 방에 있는 데이터:", song_list[1])
+
+# append(): 리스트 맨 뒤에 새 데이터를 추가합니다.
+song_list.append("Supernova")
+print("새 노래가 추가된 리스트:", song_list)`,
+    result:
+`리스트 전체 보기: ['Love Dive', 'Ditto', 'Hype Boy']
+0번째 방에 있는 데이터: Love Dive
+1번째 방에 있는 데이터: Ditto
+새 노래가 추가된 리스트: ['Love Dive', 'Ditto', 'Hype Boy', 'Supernova']`
+  },
+  {
+    id:4, unit:"3-4단계", color:"#EF4444", icon:"🏷️",
+    title:"딕셔너리 실습",
+    desc:"이름표가 붙은 가방, 딕셔너리를 사용해봐요!",
+    code:
+`# 키와 값으로 매칭하는 데이터 구조
+movie_info = {"제목": "범죄도시", "관객수": 10000000, "평점": 9.2}
+print("전체 정보:", movie_info)
+
+# 이름표(Key)를 부르면 컴퓨터가 그 안에 든 값을 꺼내줍니다.
+print("영화의 제목만 꺼내기:", movie_info["제목"])
+print("영화의 관객수만 꺼내기:", movie_info["관객수"])`,
+    result:
+`전체 정보: {'제목': '범죄도시', '관객수': 10000000, '평점': 9.2}
+영화의 제목만 꺼내기: 범죄도시
+영화의 관객수만 꺼내기: 10000000`
+  },
+  {
+    id:5, unit:"3-4단계", color:"#EF4444", icon:"🔄",
+    title:"for 반복문 실습",
+    desc:"for 반복문으로 자동화 공장을 만들어봐요!",
+    code:
+`song_list = ["Love Dive", "Ditto", "Hype Boy", "Supernova", "Drama"]
+
+# song_list 가방에서 노래를 하나씩 꺼내어 'song'이라는
+# 임시 이름표를 붙이고 반복합니다.
+for song in song_list:
+    # 콜론(:) 다음 줄에서 반드시 들여쓰기(Tab)!
+    print("★ 오늘의 추천 음악: " + song)
+
+print("--- 반복 공장 가동 끝 ---")`,
+    result:
+`★ 오늘의 추천 음악: Love Dive
+★ 오늘의 추천 음악: Ditto
+★ 오늘의 추천 음악: Hype Boy
+★ 오늘의 추천 음악: Supernova
+★ 오늘의 추천 음악: Drama
+--- 반복 공장 가동 끝 ---`
+  },
+  {
+    id:6, unit:"3-4단계", color:"#EF4444", icon:"🎯",
+    title:"if 조건문 실습",
+    desc:"if 조건문으로 원하는 데이터만 골라봐요!",
+    code:
+`title = "스파이더맨: 노 웨이 홈"
+
+# 만약(if) title에 "스파이더맨"이 포함(in)되어 있다면?
+if "스파이더맨" in title:
+    print("마블 영웅 영화를 찾았습니다!")
+else:
+    print("다른 장르의 영화입니다.")`,
+    result:
+`마블 영웅 영화를 찾았습니다!`
+  },
+  {
+    id:7, unit:"3-4단계", color:"#EF4444", icon:"💫",
+    title:"for + if 에스파 노래 찾기",
+    desc:"for와 if 조합으로 에스파 노래만 골라봐요!",
+    code:
+`song_list = ["에스파 - Supernova", "아이브 - 해야",
+             "뉴진스 - How Sweet", "에스파 - Drama",
+             "악뮤 - Love Lee"]
+
+print("--- 🔍 에스파 노래 찾기 시작 ---")
+for song in song_list:
+    # 꺼낸 노래(song) 안에 "에스파"라는 글자가 포함되어 있다면?
+    if "에스파" in song:
+        print("찾았다! 에스파 노래:", song)
+print("--- 검색 종료 ---")`,
+    result:
+`--- 🔍 에스파 노래 찾기 시작 ---
+찾았다! 에스파 노래: 에스파 - Supernova
+찾았다! 에스파 노래: 에스파 - Drama
+--- 검색 종료 ---`
+  },
+  {
+    id:8, unit:"3-4단계", color:"#EF4444", icon:"🦸",
+    title:"리스트 + for + if 마블 영웅 심화",
+    desc:"리스트·for·if 조합으로 마블 영웅을 찾아봐요!",
+    code:
+`# 찾아야 할 마블 영웅들을 리스트 가방에 모아둡니다.
+marvel_heroes = ["스파이더맨", "아이언맨", "헐크",
+                 "토르", "캡틴 아메리카"]
+
+title = "캡틴 아메리카: 윈터 솔져"
+
+# for문 로봇이 영웅을 한 명씩 꺼내서 (for)
+for hero in marvel_heroes:
+    # 영화 제목에 그 영웅 이름이 있는지 검사합니다 (if)
+    if hero in title:
+        print("찾았다! 마블 영웅:", hero)`,
+    result:
+`찾았다! 마블 영웅: 캡틴 아메리카`
+  },
+
+  // ─── 6단계 ─────────────────────────────────────────
+  {
+    id:9, unit:"6단계", color:"#F59E0B", icon:"🎵",
+    title:"bugs.py — 벅스뮤직 TOP 5 크롤링",
+    desc:"벅스뮤직 실시간 차트 TOP 5를 수집해봐요!",
+    code:
+`import requests
+from bs4 import BeautifulSoup
+
+# 1. 벅스뮤직 차트 주소 설정
+url = "https://music.bugs.co.kr/chart"
+
+# 2. 웹사이트에서 소스코드 가져오기
+response = requests.get(url)
+
+# 3. BeautifulSoup으로 분석
+soup = BeautifulSoup(response.text, 'html.parser')
+
+# 4. 태그 'p', class 'title'/'artist' 블록 찾기
+titles  = soup.find_all('p', class_='title')
+artists = soup.find_all('p', class_='artist')
+
+print("--- 🎵 실시간 음원 TOP 5 ---")
+for i in range(5):
+    song   = titles[i].text.strip()
+    singer = artists[i].text.strip()
+    print(f"[{i+1}위] {song} - {singer}")`,
+    result:
+`--- 🎵 실시간 음원 TOP 5 ---
+[1위] Supernova - 에스파
+[2위] How Sweet - 뉴진스
+[3위] Celebrity - 아이유
+[4위] Butter - BTS
+[5위] Love Lee - 악뮤`
+  },
+  {
+    id:10, unit:"6단계", color:"#F59E0B", icon:"🔥",
+    title:"특정 가수 곡만 필터링하기",
+    desc:"원하는 가수의 곡만 골라 출력해봐요!",
+    code:
+`import requests
+from bs4 import BeautifulSoup
+
+url      = "https://music.bugs.co.kr/chart"
+response = requests.get(url)
+soup     = BeautifulSoup(response.text, 'html.parser')
+titles   = soup.find_all('p', class_='title')
+artists  = soup.find_all('p', class_='artist')
+
+target_singer = "아이유"   # 원하는 가수로 변경 가능!
+print(f"\\n--- 🔥 [{target_singer}] 가수의 곡 검색 결과 ---")
+for i in range(100):
+    song   = titles[i].text.strip()
+    singer = artists[i].text.strip()
+    if target_singer in singer:
+        print(f"🎯 찾았다! [{i+1}위] {song} ({singer})")`,
+    result:
+`--- 🔥 [아이유] 가수의 곡 검색 결과 ---
+🎯 찾았다! [3위] Celebrity (아이유)
+🎯 찾았다! [14위] 소격동 (아이유)
+🎯 찾았다! [27위] LILAC (아이유)
+🎯 찾았다! [45위] 밤편지 (아이유)`
+  },
+
+  // ─── 7단계 ─────────────────────────────────────────
+  {
+    id:11, unit:"7단계", color:"#22C55E", icon:"📊",
+    title:"Pandas 통합 코드 — Part 1 (크롤링)",
+    desc:"Pandas와 함께 벅스뮤직 데이터를 수집해봐요!",
+    code:
+`import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+
+url     = "https://music.bugs.co.kr/chart"
+headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+response = requests.get(url, headers=headers)
+soup     = BeautifulSoup(response.text, 'html.parser')
+
+# 데이터를 담을 빈 가방(리스트) 준비
+chart_list = []
+tracks = soup.select('table.byChart > tbody > tr')
+
+for track in tracks:
+    title_el  = track.select_one('p.title > a')
+    artist_el = track.select_one('p.artist > a')
+    if title_el and artist_el:
+        chart_list.append({"제목": title_el.text.strip(),
+                           "가수": artist_el.text.strip()})`,
+    result:
+`(아래 Part 2 코드와 함께 실행합니다)`
+  },
+  {
+    id:12, unit:"7단계", color:"#22C55E", icon:"💾",
+    title:"Pandas 통합 코드 — Part 2 (저장)",
+    desc:"수집 데이터를 DataFrame으로 변환하고 엑셀 저장!",
+    code:
+`# 4. Pandas로 수집된 리스트를 표(DataFrame)로 변환
+df = pd.DataFrame(chart_list)
+
+print("\\n📊 수집 완료! 상위 5개 데이터:")
+print(df.head())
+
+# 5. '가수' 열에 '에스파'가 포함된 행만 필터링
+aespa_df = df[df["가수"].str.contains("에스파")]
+print("\\n✨ 에스파 노래 필터링 결과:")
+print(aespa_df)
+
+# 6. 엑셀 파일로 저장 (index=False → 줄번호 제외)
+aespa_df.to_excel("에스파_벅스차트_모음.xlsx", index=False)
+print("\\n💾 '에스파_벅스차트_모음.xlsx' 저장 완료!")`,
+    result:
+`📊 수집 완료! 상위 5개 데이터:
+   제목         가수
+0  Supernova    에스파
+1  How Sweet    뉴진스
+2  Celebrity    아이유
+
+✨ 에스파 노래 필터링 결과:
+   제목         가수
+0  Supernova    에스파
+
+💾 '에스파_벅스차트_모음.xlsx' 저장 완료!`
+  },
+
+  // ─── 8-9단계 ───────────────────────────────────────
+  {
+    id:13, unit:"8-9단계", color:"#22C55E", icon:"🎬",
+    title:"movie.py — 영화 박스오피스 Part 1",
+    desc:"위키피디아 영화 흥행 표를 크롤링 준비해봐요!",
+    code:
+`import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+
+url = "https://ko.wikipedia.org/wiki/대한민국의_영화_흥행_기록"
+# 사람인 척 위장 (이걸 빼먹으면 위키피디아가 차단해서 엑셀이 텅 비게 됨)
+headers = {"User-Agent": "Mozilla/5.0"}
+soup = BeautifulSoup(requests.get(url, headers=headers).text, 'html.parser')
+
+movie_list = []
+rows = soup.select('table.wikitable tr')`,
+    result:
+`(아래 Part 2 코드와 함께 실행합니다)`
+  },
+  {
+    id:14, unit:"8-9단계", color:"#22C55E", icon:"📄",
+    title:"movie.py — 영화 박스오피스 Part 2",
+    desc:"영화 순위와 제목을 엑셀 파일로 저장해봐요!",
+    code:
+`print("--- 🎬 상위 20개 영화 수집 시작 ---")
+
+for row in rows:
+    cols = row.select('td')  # 칸(td)들을 찾아서
+
+    # [핵심 방패] 칸이 최소 2개 이상 있는 '진짜 영화 데이터'일 때만 담기!
+    if len(cols) >= 2:
+        movie_list.append({
+            "순위": cols[0].text.strip(),     # 첫 번째 칸
+            "영화제목": cols[1].text.strip()  # 두 번째 칸
+        })
+
+    # 가방에 정확히 20개가 담기면 반복문 멈추기!
+    if len(movie_list) == 20:
+        break
+
+# 엑셀로 저장하기
+pd.DataFrame(movie_list).to_excel("boxoffice.xlsx", index=False)
+print("--- 💾 'boxoffice.xlsx' 안전하게 저장 완료! ---")`,
+    result:
+`--- 🎬 상위 20개 영화 수집 시작 ---
+--- 💾 'boxoffice.xlsx' 안전하게 저장 완료! ---`
+  },
+
+  // ─── 10단계 ────────────────────────────────────────
+  {
+    id:15, unit:"10단계", color:"#22C55E", icon:"🛡️",
+    title:"User-Agent 헤더 적용",
+    desc:"크롤링 방어벽을 뚫는 User-Agent를 설정해봐요!",
+    code:
+`headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}`,
+    result:
+`(headers 변수가 생성되었습니다 — 다음 크롤링에서 사용됩니다)`
+  },
+
+  // ─── 11-12단계 ─────────────────────────────────────
+  {
+    id:18, unit:"11-12단계", color:"#3B82F6", icon:"🤖",
+    title:"브라우저 자동 실행 코드",
+    desc:"Selenium으로 크롬 브라우저를 자동으로 열어봐요!",
+    code:
+`from selenium import webdriver
+import time
+
+print("로봇 브라우저를 작동시킵니다...")
+
+# 크롬 브라우저를 파이썬으로 실행
+driver = webdriver.Chrome()
+
+# 네이버 지도 사이트로 자동 이동
+driver.get("https://map.naver.com/")
+
+# 화면이 열릴 때까지 5초 대기
+time.sleep(5)
+
+print("현재 URL:", driver.current_url)
+print("페이지 제목:", driver.title)`,
+    result:
+`로봇 브라우저를 작동시킵니다...
+(Chrome 브라우저 창이 자동으로 열립니다!)
+
+현재 URL: https://map.naver.com/
+페이지 제목: NAVER 지도`
+  },
+
+  // ─── 13단계 ────────────────────────────────────────
+  {
+    id:19, unit:"13단계", color:"#3B82F6", icon:"🗺️",
+    title:"네이버 지도 자동 검색",
+    desc:"Selenium으로 지도 검색창에 자동 타이핑해봐요!",
+    code:
+`from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+import time
+
+options = Options()
+options.add_experimental_option("detach", True)
+driver = webdriver.Chrome(options=options)
+
+driver.get("https://map.naver.com/")
+
+# 로딩 충분히
+time.sleep(5)
+
+# 검색창 콕 집기 ('input_search'라는 클래스 가진 입력창 찾기)
+search_box = driver.find_element(By.CSS_SELECTOR, "input.input_search")
+
+# 검색어 입력 및 엔터
+search_box.send_keys("우리동네 맛집")
+search_box.send_keys(Keys.ENTER)
+
+print("검색 성공!")`,
+    result:
+`(Chrome 브라우저 자동 실행 — detach 옵션으로 창이 닫히지 않고 유지됨)
+(네이버 지도 → '우리동네 맛집' 자동 타이핑)
+(Enter 키 자동 클릭 → 검색 결과 로딩)
+
+검색 성공!`
+  },
+
+  // ─── 14단계 ────────────────────────────────────────
+  {
+    id:20, unit:"14단계", color:"#3B82F6", icon:"📍",
+    title:"네이버 지도 핫플 장소 수집",
+    desc:"홍대 카페 목록을 자동으로 수집해봐요!",
+    code:
+`from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+import time
+
+# 1. 브라우저 창 띄우기
+options = Options()
+options.add_experimental_option("detach", True)
+driver = webdriver.Chrome(options=options)
+
+driver.get("https://map.naver.com/")
+time.sleep(5)  # 로딩 대기
+
+# 2. 검색하기
+search_box = driver.find_element(By.CSS_SELECTOR, "input.input_search")
+search_box.send_keys("홍대 카페")
+search_box.send_keys(Keys.ENTER)
+time.sleep(5)
+
+# 3. iframe(액자) 안으로 들어가기
+driver.switch_to.frame("searchIframe")
+time.sleep(2)
+
+# 4. 스크롤 내리기 (목록 더 보기)
+scroll_area = driver.find_element(By.CSS_SELECTOR, "#_pcmap_list_scroll_container")
+for i in range(5): # 아이들이 이해하기 쉽게 횟수를 줄였습니다.
+    driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", scroll_area)
+    time.sleep(1)
+
+# 5. 카페 이름 가져오기
+places = driver.find_elements(By.CSS_SELECTOR, "span.TYaxT")
+
+print(f"--- ☕ 총 {len(places)}개의 카페를 찾았습니다 ---")
+for place in places:
+    print(f"카페: {place.text.strip()}")`,
+    result:
+`--- ☕ 총 12개의 카페를 찾았습니다 ---
+카페: 카페 온더레코드
+카페: 앤트러사이트 홍대
+카페: 루프트 홍대
+카페: 커피한약방
+카페: 블루보틀 홍대점
+...  (12개 수집)`
+  },
+
+  // ─── 15단계 ────────────────────────────────────────
+  {
+    id:21, unit:"15단계", color:"#3B82F6", icon:"🗂️",
+    title:"DataFrame 생성 & CSV 저장",
+    desc:"수집 데이터를 엑셀 표로 변환하고 저장해봐요!",
+    code:
+`import pandas as pd
+
+# 14단계에서 수집한 핫플 데이터라고 가정
+hotplace_data = {
+    "맛집 이름": ["카페 온더레코드", "앤트러사이트", "루프트",
+                 "커피한약방", "블루보틀 홍대점"],
+    "평점": [4.5, 4.2, 4.8, 4.1, 4.7]
+}
+
+# Pandas로 표(DataFrame) 만들기
+df = pd.DataFrame(hotplace_data)
+
+print("--- 엑셀 변환 미리보기 ---")
+print(df)
+
+df.to_csv('우리동네_핫플지도.csv', encoding='utf-8-sig', index=False)
+print('우리동네_핫플지도.csv 저장 완료!')`,
+    result:
+`--- 엑셀 변환 미리보기 ---
+   맛집 이름         평점
+0  카페 온더레코드   4.5
+1  앤트러사이트      4.2
+2  루프트            4.8
+3  커피한약방        4.1
+4  블루보틀 홍대점   4.7
+
+우리동네_핫플지도.csv 저장 완료!`
+  }
+];
+
+// ════════════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════════════
+let currentEx     = null;
+let currentTarget = '';   // 주석 제외, 학생이 실제 타이핑해야 할 코드
+const progress = JSON.parse(localStorage.getItem('cp_progress') || '{}');
+
+// 한 줄을 "코드부"와 "인라인 주석부"로 분리 (따옴표 안의 #은 무시)
+function splitInlineComment(line) {
+  let inSingle = false, inDouble = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '\\') { i++; continue; }               // 이스케이프 문자는 건너뛰기
+    if (ch === "'" && !inDouble) inSingle = !inSingle;
+    else if (ch === '"' && !inSingle) inDouble = !inDouble;
+    else if (ch === '#' && !inSingle && !inDouble) {
+      return { codePart: line.slice(0, i).replace(/\s+$/, ''), commentPart: line.slice(i) };
+    }
+  }
+  return { codePart: line, commentPart: '' };
+}
+
+// 주석 줄(#으로 시작), 인라인 주석(코드 뒤 #...), 빈 줄을 모두 제거한 타이핑 대상 생성
+function getTypingTarget(code) {
+  const lines = code.split('\n');
+  const result = [];
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed === '' || trimmed.startsWith('#')) continue;   // 빈 줄 / 통째 주석 줄은 스킵
+    result.push(splitInlineComment(line).codePart);             // 인라인 주석은 잘라내기
+  }
+  return result.join('\n');
+}
+
+// ════════════════════════════════════════════════════════
+//  BUILD HOME
+// ════════════════════════════════════════════════════════
+function buildHome() {
+  const units = {};
+  EXERCISES.forEach(ex => {
+    if (!units[ex.unit]) units[ex.unit] = { color: ex.color, items: [] };
+    units[ex.unit].items.push(ex);
+  });
+
+  const unitKeys = Object.keys(units);
+
+  // Build sidebar nav
+  const navEl = document.getElementById('unit-nav');
+  navEl.innerHTML = '<div class="unit-nav-label">단계</div>' +
+    unitKeys.map((unit, i) =>
+      `<button class="unit-nav-btn" onclick="scrollToUnit(this,${i})">${unit}</button>`
+    ).join('');
+
+  // Build cards
+  const homeEl = document.getElementById('home-cards');
+  let html = '';
+
+  unitKeys.forEach((unit, i) => {
+    const { color, items } = units[unit];
+    html += `<div class="unit-section" id="unit-sec-${i}">
+      <div class="unit-label" style="background:${color}">${unit}</div>
+      <div class="cards-grid">`;
+    items.forEach(ex => {
+      const done = progress[ex.id];
+      const lines = ex.code.split('\n').length;
+      html += `<div class="ex-card" style="--accent-color:${ex.color}" onclick="startExercise(${ex.id})">
+        <div class="card-icon">${ex.icon}</div>
+        ${done ? '<span class="done-badge">✅</span>' : ''}
+        <div class="card-title">${ex.title}</div>
+        <div class="card-desc">${ex.desc}</div>
+        <div class="card-lines">📝 ${lines}줄 코드</div>
+        <button class="card-btn" style="background:${ex.color}">시작하기 →</button>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+
+  homeEl.innerHTML = html;
+}
+
+function scrollToUnit(btn, idx) {
+  document.querySelectorAll('.unit-nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const section = document.getElementById('unit-sec-' + idx);
+  if (!section) return;
+  const cards = document.getElementById('home-cards');
+  const offset = section.getBoundingClientRect().top - cards.getBoundingClientRect().top + cards.scrollTop - 8;
+  cards.scrollTo({ top: offset, behavior: 'smooth' });
+}
+
+// ════════════════════════════════════════════════════════
+//  NAVIGATION
+// ════════════════════════════════════════════════════════
+function startExercise(id) {
+  currentEx = EXERCISES.find(e => e.id === id);
+  if (!currentEx) return;
+
+  document.getElementById('home-view').style.display = 'none';
+  document.getElementById('exercise-view').style.display = 'flex';
+
+  const tag = document.getElementById('ex-unit-tag');
+  tag.textContent = currentEx.unit;
+  tag.style.background = currentEx.color;
+  document.getElementById('ex-title').textContent = currentEx.icon + ' ' + currentEx.title;
+
+  // 타이핑 대상: 주석 줄 제거
+  currentTarget = getTypingTarget(currentEx.code);
+  buildEmojiPalette(getSpecialChars(currentTarget));
+
+  // 왼쪽 코드 표시 — 주석(줄 전체 또는 인라인)은 회색+이탤릭으로 구분
+  const pre = document.getElementById('code-display-pre');
+  pre.innerHTML = '';
+  currentEx.code.split('\n').forEach(line => {
+    const span = document.createElement('span');
+    if (line.trim().startsWith('#')) {
+      span.textContent = line;
+      span.className = 'code-line-comment';
+    } else {
+      const { codePart, commentPart } = splitInlineComment(line);
+      span.appendChild(document.createTextNode(codePart));
+      if (commentPart) {
+        const cSpan = document.createElement('span');
+        cSpan.className = 'code-line-comment';
+        cSpan.textContent = '  ' + commentPart;
+        span.appendChild(cSpan);
+      }
+    }
+    pre.appendChild(span);
+  });
+
+  resetInput();
+  document.getElementById('code-input').focus();
+}
+
+function goHome() {
+  document.getElementById('exercise-view').style.display = 'none';
+  document.getElementById('home-view').style.display = 'flex';
+  buildHome();
+}
+
+// ════════════════════════════════════════════════════════
+//  COPY-PASTE PREVENTION
+// ════════════════════════════════════════════════════════
+const textarea = document.getElementById('code-input');
+
+// 왼쪽 코드 패널: 드래그/선택 완전 차단
+document.querySelector('.code-panel').addEventListener('selectstart', e => e.preventDefault());
+document.querySelector('.code-panel').addEventListener('dragstart',   e => e.preventDefault());
+document.querySelector('.code-panel').addEventListener('mousedown',   e => e.preventDefault());
+
+// 오른쪽 입력창: 붙여넣기·잘라내기만 차단, 복사(Ctrl+C)는 허용
+['cut','paste'].forEach(evt => {
+  textarea.addEventListener(evt, e => {
+    e.preventDefault();
+    showToast(evt === 'paste' ? '붙여넣기는 안 돼요! 직접 타이핑해주세요 ✏️' : '잘라내기는 사용할 수 없어요!');
+  });
+});
+
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+textarea.addEventListener('keydown', e => {
+  const key = e.key.toLowerCase();
+  // Ctrl+V / Ctrl+X 만 차단 (Ctrl+C, Ctrl+A 는 허용 → 자기 코드 복사 가능)
+  if ((e.ctrlKey || e.metaKey) && ['v','x'].includes(key)) {
+    e.preventDefault();
+    showToast(key === 'v' ? '붙여넣기 금지! 직접 타이핑해봐요 💪' : '잘라내기 금지!');
+    return;
+  }
+  // Tab → 4 spaces
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const s = textarea.selectionStart, en = textarea.selectionEnd;
+    textarea.value = textarea.value.substring(0, s) + '    ' + textarea.value.substring(en);
+    textarea.selectionStart = textarea.selectionEnd = s + 4;
+    updateComparison();
+  }
+});
+
+// ════════════════════════════════════════════════════════
+//  LIVE COMPARISON
+// ════════════════════════════════════════════════════════
+textarea.addEventListener('input', updateComparison);
+
+function esc(c) {
+  return c.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function updateComparison() {
+  if (!currentEx) return;
+  const target = currentTarget;   // 주석 제외 타이핑 대상
+  const typed  = textarea.value;
+
+  let html = '';
+  let correct = 0;
+  const total = target.length;
+
+  for (let i = 0; i < Math.max(target.length, typed.length); i++) {
+    const tc = target[i];
+    const ic = typed[i];
+
+    const disp = ch => {
+      if (ch === '\n') return '↵\n';
+      if (ch === ' ')  return '·';
+      if (ch === '\t') return '→';
+      return esc(ch);
+    };
+
+    if (i >= target.length) {
+      html += `<span class="cmp-extra">${disp(ic)}</span>`;
+    } else if (i >= typed.length) {
+      html += `<span class="cmp-miss">${disp(tc)}</span>`;
+    } else if (tc === ic) {
+      correct++;
+      html += `<span class="cmp-ok">${disp(tc)}</span>`;
+    } else {
+      html += `<span class="cmp-wrong" title="기댓값:${disp(tc)}">${disp(ic)}</span>`;
+    }
+  }
+
+  document.getElementById('cmp-display').innerHTML = html;
+
+  const pct = total > 0 ? Math.min(100, Math.round(correct / total * 100)) : 0;
+  document.getElementById('match-fill').style.width = pct + '%';
+  document.getElementById('match-pct').textContent = pct + '%';
+  document.getElementById('cmp-stats').textContent = `${correct} / ${total} 글자`;
+
+  const statusEl = document.getElementById('match-status');
+  const btn = document.getElementById('btn-result');
+
+  if (typed.length === 0) {
+    statusEl.className = 'match-status start';
+    statusEl.textContent = '타이핑을 시작하면 비교가 시작돼요 ✏️';
+    textarea.className = '';
+    btn.classList.remove('pulse');
+  } else if (typed === currentTarget) {
+    statusEl.className = 'match-status ok';
+    statusEl.textContent = '🎉 완벽해요! 100% 정확합니다! 이제 결과 확인 버튼을 눌러보세요!';
+    textarea.className = 'all-match';
+    btn.classList.add('pulse');
+    progress[currentEx.id] = true;
+    localStorage.setItem('cp_progress', JSON.stringify(progress));
+    showSuccess();
+  } else if (typed.length > target.length && correct === total) {
+    statusEl.className = 'match-status partial';
+    statusEl.textContent = `⚠️ 목표 코드 완성! 불필요한 글자가 ${typed.length - target.length}개 더 있어요. 지워보세요!`;
+    textarea.className = '';
+    btn.classList.remove('pulse');
+  } else if (pct >= 50) {
+    statusEl.className = 'match-status ok';
+    statusEl.textContent = `✅ ${pct}% 맞았어요! 조금만 더 화이팅!`;
+    textarea.className = '';
+    btn.classList.remove('pulse');
+  } else {
+    statusEl.className = 'match-status partial';
+    statusEl.textContent = `⚠️ ${pct}% 맞았어요. 빨간 부분을 확인해보세요!`;
+    textarea.className = '';
+    btn.classList.remove('pulse');
+  }
+}
+
+function resetInput() {
+  textarea.value = '';
+  document.getElementById('cmp-display').innerHTML = '';
+  document.getElementById('match-fill').style.width = '0%';
+  document.getElementById('match-pct').textContent = '0%';
+  document.getElementById('cmp-stats').textContent = '';
+  document.getElementById('match-status').className = 'match-status start';
+  document.getElementById('match-status').textContent = '타이핑을 시작하면 비교가 시작돼요 ✏️';
+  textarea.className = '';
+  document.getElementById('btn-result').classList.remove('pulse');
+}
+
+// ════════════════════════════════════════════════════════
+//  EMOJI / SPECIAL CHAR PALETTE
+// ════════════════════════════════════════════════════════
+function getSpecialChars(code) {
+  // Match emoji (BMP + supplementary) and hard-to-type symbols
+  const regex = /[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}★—–]/gu;
+  const seen = new Set();
+  const result = [];
+  (code.match(regex) || []).forEach(ch => {
+    if (!seen.has(ch)) { seen.add(ch); result.push(ch); }
+  });
+  return result;
+}
+
+let _paletteChars = [];
+
+function buildEmojiPalette(chars) {
+  _paletteChars = chars;
+  const palette = document.getElementById('emoji-palette');
+  const btns    = document.getElementById('emoji-btns');
+  if (!chars.length) { palette.style.display = 'none'; return; }
+  palette.style.display = 'block';
+  // Use index to avoid HTML attribute escaping issues with emoji characters
+  btns.innerHTML = chars.map((ch, i) =>
+    `<button class="emoji-btn" onclick="insertChar(${i})" title="${ch}">${ch}</button>`
+  ).join('');
+}
+
+function insertChar(idx) {
+  const ch = _paletteChars[idx];
+  if (!ch) return;
+  const ta = document.getElementById('code-input');
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  ta.value = ta.value.slice(0, s) + ch + ta.value.slice(e);
+  ta.selectionStart = ta.selectionEnd = s + [...ch].length;
+  ta.focus();
+  updateComparison();
+}
+
+// ════════════════════════════════════════════════════════
+//  PASSWORD & RESULT
+// ════════════════════════════════════════════════════════
+function openPasswordModal() {
+  document.getElementById('pw-overlay').classList.add('show');
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-error').classList.remove('show');
+  setTimeout(() => document.getElementById('pw-input').focus(), 100);
+}
+
+function closePasswordModal() {
+  document.getElementById('pw-overlay').classList.remove('show');
+}
+
+document.getElementById('pw-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkPassword();
+});
+
+function checkPassword() {
+  const val = document.getElementById('pw-input').value;
+  if (val === ANSWER_PASSWORD) {
+    closePasswordModal();
+    showResult();
+  } else {
+    const errEl = document.getElementById('pw-error');
+    errEl.classList.add('show');
+    document.getElementById('pw-input').style.borderColor = '#EF4444';
+    setTimeout(() => { document.getElementById('pw-input').style.borderColor = ''; }, 1500);
+  }
+}
+
+function showResult() {
+  if (!currentEx) return;
+  document.getElementById('result-ex-title').textContent = currentEx.icon + ' ' + currentEx.title;
+
+  const body = document.getElementById('result-body');
+  body.innerHTML =
+    `<span class="terminal-prompt">PS C:\\Users\\크롤링수업> python code.py\n\n</span>` +
+    `<span class="terminal-green">${esc(currentEx.result)}\n</span>` +
+    `\n<span class="terminal-prompt">PS C:\\Users\\크롤링수업> _</span>`;
+
+  document.getElementById('result-overlay').classList.add('show');
+}
+
+function closeResultModal() {
+  document.getElementById('result-overlay').classList.remove('show');
+}
+
+// ════════════════════════════════════════════════════════
+//  ANSWER REVEAL (정답 코드 확인 — 별도 암호)
+// ════════════════════════════════════════════════════════
+function openAnswerPasswordModal() {
+  document.getElementById('answer-pw-overlay').classList.add('show');
+  document.getElementById('answer-pw-input').value = '';
+  document.getElementById('answer-pw-error').classList.remove('show');
+  setTimeout(() => document.getElementById('answer-pw-input').focus(), 100);
+}
+
+function closeAnswerPasswordModal() {
+  document.getElementById('answer-pw-overlay').classList.remove('show');
+}
+
+document.getElementById('answer-pw-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkAnswerPassword();
+});
+
+function checkAnswerPassword() {
+  const val = document.getElementById('answer-pw-input').value;
+  if (val === REVEAL_PASSWORD) {
+    closeAnswerPasswordModal();
+    showAnswer();
+  } else {
+    const errEl = document.getElementById('answer-pw-error');
+    errEl.classList.add('show');
+    document.getElementById('answer-pw-input').style.borderColor = '#EF4444';
+    setTimeout(() => { document.getElementById('answer-pw-input').style.borderColor = ''; }, 1500);
+  }
+}
+
+function showAnswer() {
+  if (!currentEx) return;
+  document.getElementById('answer-ex-title').textContent = currentEx.icon + ' ' + currentEx.title;
+  document.getElementById('answer-body').textContent = currentEx.code;
+  document.getElementById('answer-overlay').classList.add('show');
+}
+
+function closeAnswerModal() {
+  document.getElementById('answer-overlay').classList.remove('show');
+}
+
+function copyAnswer() {
+  if (!currentEx) return;
+  navigator.clipboard.writeText(currentEx.code)
+    .then(() => showToast('정답 코드가 복사됐어요! 📋'))
+    .catch(() => showToast('복사에 실패했어요. 직접 선택해서 Ctrl+C 해주세요!'));
+}
+
+// Close modals on overlay click
+['pw-overlay','result-overlay','answer-pw-overlay','answer-overlay'].forEach(id => {
+  document.getElementById(id).addEventListener('click', function(e) {
+    if (e.target === this) {
+      this.classList.remove('show');
+    }
+  });
+});
+
+// ════════════════════════════════════════════════════════
+//  SUCCESS ANIMATION
+// ════════════════════════════════════════════════════════
+function showSuccess() {
+  const el = document.getElementById('success-overlay');
+  if (el.dataset.shown === 'true') return;
+  el.dataset.shown = 'true';
+  launchConfetti();  // 팝업 없이 빵빠레만
+}
+
+textarea.addEventListener('input', () => {
+  if (textarea.value !== currentTarget) {
+    document.getElementById('success-overlay').dataset.shown = '';
+  }
+});
+
+// Simple confetti
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const pieces = Array.from({length:120}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * -canvas.height,
+    r: Math.random() * 8 + 4,
+    c: `hsl(${Math.random()*360},90%,60%)`,
+    vx: (Math.random()-0.5) * 4,
+    vy: Math.random() * 5 + 2,
+    spin: (Math.random()-0.5) * 0.2,
+    angle: Math.random() * Math.PI * 2
+  }));
+
+  let frame;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    pieces.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.angle += p.spin;
+      if (p.y < canvas.height + 20) alive = true;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle);
+      ctx.fillStyle = p.c;
+      ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r*0.5);
+      ctx.restore();
+    });
+    if (alive) frame = requestAnimationFrame(draw);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  cancelAnimationFrame(frame);
+  draw();
+}
+
+// ════════════════════════════════════════════════════════
+//  TOAST
+// ════════════════════════════════════════════════════════
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ════════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════════
+buildHome();
+</script>
+</body>
+</html>
