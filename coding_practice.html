@@ -32,6 +32,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--body);min-height:100
 
 /* ── HOME ── */
 #home-view{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.quick-links{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 32px;background:#FFF4EF;border-bottom:1px solid #FFE0D0;flex-shrink:0;}
+.quick-links-label{font-size:.78rem;font-weight:800;color:#FF6B35;margin-right:4px;}
+.quick-link-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;background:#fff;border:1.5px solid #FFD0BC;color:#B94E1F;font-size:.78rem;font-weight:700;text-decoration:none;transition:all .15s;}
+.quick-link-btn:hover{background:#FF6B35;color:#fff;border-color:#FF6B35;}
 .home-body{display:flex;flex:1;min-height:0;overflow:hidden;}
 .unit-nav{width:96px;background:#fff;border-right:2px solid #F1F5F9;padding:10px 6px;display:flex;flex-direction:column;gap:3px;overflow-y:auto;flex-shrink:0;}
 .unit-nav-label{font-size:.6rem;font-weight:800;color:#94A3B8;letter-spacing:.1em;padding:3px 6px 8px;text-transform:uppercase;}
@@ -181,6 +185,14 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--body);min-height:100
       <span class="fish-icon">🐟</span>
       <h1>웹 크롤링 코딩 연습</h1>
     </div>
+  </div>
+  <div class="quick-links">
+    <span class="quick-links-label">🔗 바로가기</span>
+    <a class="quick-link-btn" href="https://music.bugs.co.kr/chart" target="_blank" rel="noopener">🎵 벅스뮤직 차트</a>
+    <a class="quick-link-btn" href="https://ko.wikipedia.org/wiki/대한민국의_영화_흥행_기록" target="_blank" rel="noopener">🎬 영화 흥행 위키</a>
+    <a class="quick-link-btn" href="https://map.naver.com/" target="_blank" rel="noopener">🗺️ 네이버 지도</a>
+    <a class="quick-link-btn" href="https://code.visualstudio.com/download" target="_blank" rel="noopener">🧩 VS Code 설치</a>
+    <a class="quick-link-btn" href="https://www.python.org/downloads/" target="_blank" rel="noopener">🐍 파이썬 설치</a>
   </div>
   <div class="home-body">
     <nav class="unit-nav" id="unit-nav">
