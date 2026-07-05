@@ -174,9 +174,29 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--body);min-height:100
 
 /* Confetti canvas */
 #confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:999;}
+
+/* Site entry gate */
+#site-gate{position:fixed;inset:0;background:rgba(30,30,46,.97);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:5000;}
+#site-gate.unlocked{display:none;}
+#site-gate .modal{text-align:center;}
+#site-gate .fish-icon{font-size:2.4rem;display:block;margin-bottom:6px;}
 </style>
 </head>
 <body>
+
+<!-- SITE ENTRY GATE -->
+<div id="site-gate">
+  <div class="modal">
+    <span class="fish-icon">🐟</span>
+    <h3>🔒 입장 암호</h3>
+    <p>선생님이 알려준 암호를 입력하면<br>연습 사이트에 들어갈 수 있어요!</p>
+    <input type="password" id="site-gate-input" placeholder="암호 입력" maxlength="30">
+    <div class="error-msg" id="site-gate-error">❌ 암호가 틀렸어요. 선생님께 물어보세요!</div>
+    <div class="modal-btns">
+      <button class="btn-confirm" onclick="checkSiteGate()" style="flex:1;">입장하기</button>
+    </div>
+  </div>
+</div>
 
 <!-- HOME VIEW -->
 <div id="home-view">
@@ -337,6 +357,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--body);min-height:100
 // ════════════════════════════════════════════════════════
 const ANSWER_PASSWORD = "hello2025";
 const REVEAL_PASSWORD = "hello2026";   // 정답 코드 확인용 암호
+const SITE_PASSWORD = "crawling2026";  // 사이트 입장용 암호
 
 // ════════════════════════════════════════════════════════
 //  EXERCISES DATA
@@ -1324,6 +1345,30 @@ function showToast(msg) {
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ════════════════════════════════════════════════════════
+//  SITE ENTRY GATE
+// ════════════════════════════════════════════════════════
+function checkSiteGate() {
+  const input = document.getElementById('site-gate-input');
+  if (input.value === SITE_PASSWORD) {
+    document.getElementById('site-gate').classList.add('unlocked');
+    sessionStorage.setItem('cp_site_unlocked', 'true');
+  } else {
+    const errEl = document.getElementById('site-gate-error');
+    errEl.classList.add('show');
+    input.style.borderColor = '#EF4444';
+    setTimeout(() => { input.style.borderColor = ''; }, 1500);
+  }
+}
+
+document.getElementById('site-gate-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkSiteGate();
+});
+
+if (sessionStorage.getItem('cp_site_unlocked') === 'true') {
+  document.getElementById('site-gate').classList.add('unlocked');
 }
 
 // ════════════════════════════════════════════════════════
